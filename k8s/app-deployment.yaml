@@ -1,3 +1,4 @@
+# filepath: /c:/Users/maxar/Desktop/Takkeshi_Code/EcommerceDocker/k8s/app-deployment.yaml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
