@@ -1,4 +1,3 @@
-# filepath: /c:/Users/maxar/Desktop/Takkeshi_Code/EcommerceDocker/k8s/app-deployment.yaml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -15,8 +14,8 @@ spec:
     spec:
       containers:
       - name: ecommerce-app
-        image: localhost:5000/ecommerce-app:latest
-        imagePullPolicy: IfNotPresent
+        image: ecommerce-app:latest
+        imagePullPolicy: Never
         ports:
         - containerPort: 3000
         env:
