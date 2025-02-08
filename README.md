@@ -87,3 +87,7 @@ curl -X POST http://localhost:3000/api/products \
 - `PORT` - Application port (default: 3000)
 - `MONGODB_URI` - MongoDB connection string
 - `NODE_ENV` - Node environment (development/production)
+
+## Extra Notes:
+
+The API and tester tool were developed with the assistance of AI to streamline the process and eliminate the need to build everything from scratch.
