@@ -1,5 +1,5 @@
 {
-  "baseUrl": "http://localhost:3000",
+  "baseUrl": "http://10.102.69.89:80",
   "endpoints": {
     "products": "/api/products"
   },
@@ -15,7 +15,7 @@
       "description": "A test product for API testing",
       "price": 29.99,
       "stock": 100,
-      "category": "test",
+      "category": "test"
     }
   }
 }
