@@ -1,0 +1,17 @@
+{
+  "name": "api-test-tools",
+  "version": "1.0.0",
+  "description": "API testing and stress testing tools",
+  "main": "test-runner.js",
+  "scripts": {
+    "test": "node test-runner.js"
+  },
+  "dependencies": {
+    "axios": "^1.6.2",
+    "inquirer": "^8.2.6",
+    "chalk": "^4.1.2",
+    "ora": "^5.4.1",
+    "cli-table3": "^0.6.3",
+    "figlet": "^1.7.0"
+  }
+}

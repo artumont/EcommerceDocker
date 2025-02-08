@@ -1,0 +1,22 @@
+{
+  "baseUrl": "http://localhost:3000",
+  "endpoints": {
+    "products": "/api/products"
+  },
+  "stressTest": {
+    "concurrentRequests": 100,
+    "requestDelay": 50,
+    "duration": 30,
+    "timeoutMs": 5000
+  },
+  "testData": {
+    "product": {
+      "name": "Test Product",
+      "description": "A test product for API testing",
+      "price": 29.99,
+      "stock": 100,
+      "category": "test",
+      "imageUrl": "https://example.com/test.jpg"
+    }
+  }
+}
