@@ -2,6 +2,8 @@
 
 A simple e-commerce platform built to demonstrate Docker containerization and Kubernetes load balancing.
 
+(it is semi-broken but it worked for testing and learning basic kubernetes)
+
 ## Features
 
 - RESTful API for product management
