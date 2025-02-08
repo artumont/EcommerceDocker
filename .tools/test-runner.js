@@ -30,8 +30,8 @@ const displayTitle = () => {
 
 const displayResults = (results) => {
   const table = new Table({
-    head: ['Endpoint', 'Method', 'Status', 'Time (ms)', 'Result'].map(h => chalk.cyan(h)),
-    colWidths: [30, 10, 10, 12, 20]
+    head: ['Endpoint', 'Method', 'Status', 'Time (ms)', 'Result', 'Details'].map(h => chalk.cyan(h)),
+    colWidths: [30, 10, 10, 12, 15, 30]
   });
 
   results.forEach(r => {
@@ -40,7 +40,8 @@ const displayResults = (results) => {
       r.method,
       r.status === 'success' ? chalk.green(r.status) : chalk.red(r.status),
       r.time,
-      r.result
+      r.result,
+      r.details || ''
     ]);
   });
 
@@ -77,7 +78,8 @@ async function runEndpointTest(method, endpoint, data = null) {
       method,
       status: 'success',
       time,
-      result: `${response.status} OK`
+      result: `${response.status} OK`,
+      details: response.data._id ? `ID: ${response.data._id}` : undefined
     };
   } catch (error) {
     const time = Date.now() - start;
@@ -88,9 +90,112 @@ async function runEndpointTest(method, endpoint, data = null) {
       method,
       status: 'failed',
       time,
-      result: error.response ? `${error.response.status} Error` : 'Network Error'
+      result: error.response ? `${error.response.status} Error` : 'Network Error',
+      details: error.response?.data?.message || error.message
     };
   }
+}
+
+async function addMultipleProducts() {
+  const { source, count } = await inquirer.prompt([
+    {
+      type: 'list',
+      name: 'source',
+      message: 'How would you like to add products?',
+      choices: [
+        'Use sample products',
+        'Create custom products',
+        'Create random products'
+      ]
+    },
+    {
+      type: 'input',
+      name: 'count',
+      message: 'How many products would you like to add?',
+      default: '1',
+      when: (answers) => answers.source !== 'Use sample products',
+      validate: (value) => {
+        const num = parseInt(value);
+        return !isNaN(num) && num > 0 ? true : 'Please enter a valid number greater than 0';
+      }
+    }
+  ]);
+
+  const results = [];
+  
+  if (source === 'Use sample products') {
+    console.log(chalk.cyan('\nAdding sample products...\n'));
+    for (const product of config.testData.sampleProducts) {
+      results.push(await runEndpointTest('POST', config.endpoints.products, product));
+    }
+  } else if (source === 'Create custom products') {
+    for (let i = 0; i < parseInt(count); i++) {
+      const product = await promptForProductDetails(i + 1);
+      results.push(await runEndpointTest('POST', config.endpoints.products, product));
+    }
+  } else {
+    console.log(chalk.cyan('\nGenerating random products...\n'));
+    for (let i = 0; i < parseInt(count); i++) {
+      const product = generateRandomProduct(i + 1);
+      results.push(await runEndpointTest('POST', config.endpoints.products, product));
+    }
+  }
+
+  console.log('\nProduct Addition Results:');
+  displayResults(results);
+}
+
+async function promptForProductDetails(index) {
+  console.log(chalk.cyan(`\nEnter details for product #${index}:`));
+  
+  const product = await inquirer.prompt([
+    {
+      type: 'input',
+      name: 'name',
+      message: 'Product name:',
+      validate: (value) => value.length > 0 ? true : 'Name is required'
+    },
+    {
+      type: 'input',
+      name: 'description',
+      message: 'Product description:',
+      validate: (value) => value.length > 0 ? true : 'Description is required'
+    },
+    {
+      type: 'number',
+      name: 'price',
+      message: 'Price:',
+      validate: (value) => value >= 0 ? true : 'Price must be greater than or equal to 0'
+    },
+    {
+      type: 'number',
+      name: 'stock',
+      message: 'Stock quantity:',
+      validate: (value) => value >= 0 ? true : 'Stock must be greater than or equal to 0'
+    },
+    {
+      type: 'list',
+      name: 'category',
+      message: 'Category:',
+      choices: ['electronics', 'clothing', 'books', 'furniture', 'food', 'toys', 'sports', 'appliances', 'other']
+    }
+  ]);
+
+  return product;
+}
+
+function generateRandomProduct(index) {
+  const categories = ['electronics', 'clothing', 'books', 'furniture', 'food', 'toys', 'sports', 'appliances'];
+  const adjectives = ['Premium', 'Deluxe', 'Professional', 'Basic', 'Advanced', 'Smart', 'Ultra', 'Super'];
+  const productTypes = ['Widget', 'Gadget', 'Tool', 'Device', 'Kit', 'System', 'Pack', 'Set'];
+
+  return {
+    name: `${adjectives[Math.floor(Math.random() * adjectives.length)]} ${productTypes[Math.floor(Math.random() * productTypes.length)]} ${index}`,
+    description: `Auto-generated test product #${index}`,
+    price: +(Math.random() * 1000).toFixed(2),
+    stock: Math.floor(Math.random() * 100) + 1,
+    category: categories[Math.floor(Math.random() * categories.length)]
+  };
 }
 
 async function runStressTest(endpoint, method = 'GET', data = null) {
@@ -143,8 +248,9 @@ const mainMenu = async () => {
   displayTitle();
   
   const choices = [
-    'Run All Tests',
-    'Test Single Endpoint',
+    'Add Products',
+    'View Products',
+    'Run Basic CRUD Tests',
     'Run Stress Test',
     'Modify Configuration',
     'Exit'
@@ -160,11 +266,18 @@ const mainMenu = async () => {
   ]);
 
   switch (action) {
-    case 'Run All Tests':
-      await runAllTests();
+    case 'Add Products':
+      await addMultipleProducts();
       break;
-    case 'Test Single Endpoint':
-      await testSingleEndpoint();
+    case 'View Products':
+      const result = await runEndpointTest('GET', config.endpoints.products);
+      if (result.status === 'success') {
+        console.log('\nCurrent Products:');
+        console.log(JSON.stringify(result.data, null, 2));
+      }
+      break;
+    case 'Run Basic CRUD Tests':
+      await runBasicTests();
       break;
     case 'Run Stress Test':
       await stressTestMenu();
@@ -180,8 +293,8 @@ const mainMenu = async () => {
   await mainMenu();
 };
 
-async function runAllTests() {
-  console.log(chalk.cyan('\nRunning all endpoint tests...\n'));
+async function runBasicTests() {
+  console.log(chalk.cyan('\nRunning basic CRUD tests...\n'));
   testResults = [];
   
   // GET all products
@@ -189,9 +302,10 @@ async function runAllTests() {
   
   // POST new product
   const newProduct = await runEndpointTest('POST', config.endpoints.products, config.testData.product);
+  testResults.push(newProduct);
   
   if (newProduct.status === 'success') {
-    const productId = JSON.parse(newProduct.result).id;
+    const productId = newProduct.details.split('ID: ')[1];
     
     // GET single product
     testResults.push(await runEndpointTest('GET', `${config.endpoints.products}/${productId}`));
@@ -208,43 +322,6 @@ async function runAllTests() {
   
   console.log('\nTest Results:');
   displayResults(testResults);
-}
-
-async function testSingleEndpoint() {
-  const { endpoint, method, useData } = await inquirer.prompt([
-    {
-      type: 'list',
-      name: 'endpoint',
-      message: 'Select endpoint to test:',
-      choices: [
-        'GET /api/products',
-        'GET /api/products/:id',
-        'POST /api/products',
-        'PUT /api/products/:id',
-        'DELETE /api/products/:id'
-      ]
-    },
-    {
-      type: 'list',
-      name: 'method',
-      message: 'Select HTTP method:',
-      choices: ['GET', 'POST', 'PUT', 'DELETE']
-    },
-    {
-      type: 'confirm',
-      name: 'useData',
-      message: 'Include request body?',
-      when: (answers) => ['POST', 'PUT'].includes(answers.method)
-    }
-  ]);
-
-  let data = null;
-  if (useData) {
-    data = config.testData.product;
-  }
-
-  const result = await runEndpointTest(method, config.endpoints.products, data);
-  displayResults([result]);
 }
 
 async function stressTestMenu() {

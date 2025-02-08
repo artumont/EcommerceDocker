@@ -1,5 +1,5 @@
 {
-  "baseUrl": "http://10.102.69.89:80",
+  "baseUrl": "http://localhost:3000",
   "endpoints": {
     "products": "/api/products"
   },
@@ -10,10 +10,42 @@
     "timeoutMs": 5000
   },
   "testData": {
+    "product": {
       "name": "Test Product",
       "description": "A test product for API testing",
-      "price": 29.99,
-      "stock": 100,
-      "category": "test"
+      "price": 999.99,
+      "stock": 10,
+      "category": "electronics"
+    },
+    "sampleProducts": [
+      {
+        "name": "Gaming Laptop",
+        "description": "High-performance gaming laptop with RTX 4090",
+        "price": 2499.99,
+        "stock": 5,
+        "category": "electronics"
+      },
+      {
+        "name": "Smartphone",
+        "description": "Latest smartphone with 5G capability",
+        "price": 899.99,
+        "stock": 15,
+        "category": "electronics"
+      },
+      {
+        "name": "Coffee Maker",
+        "description": "Premium coffee maker with grinder",
+        "price": 199.99,
+        "stock": 20,
+        "category": "appliances"
+      },
+      {
+        "name": "Running Shoes",
+        "description": "Professional running shoes",
+        "price": 129.99,
+        "stock": 30,
+        "category": "sports"
+      }
+    ]
   }
 }
