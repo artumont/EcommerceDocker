@@ -16,7 +16,6 @@
       "price": 29.99,
       "stock": 100,
       "category": "test",
-      "imageUrl": "https://example.com/test.jpg"
     }
   }
 }
