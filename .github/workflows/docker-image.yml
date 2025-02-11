@@ -3,8 +3,18 @@ name: Docker Build and Publish
 on:
   push:
     branches: [ "main" ]
+    paths-ignore:
+      - 'k8s/**'
+      - '.tools/**'
+      - '**.md'
+      - '.gitignore'
   pull_request:
     branches: [ "main" ]
+    paths-ignore:
+      - 'k8s/**'
+      - '.tools/**'
+      - '**.md'
+      - '.gitignore'
 
 env:
   REGISTRY: ghcr.io
