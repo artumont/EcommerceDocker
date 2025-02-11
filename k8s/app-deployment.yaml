@@ -14,8 +14,8 @@ spec:
         spec:
             containers:
                 - name: ecommerce-app
-                  image: ecommerce-app:latest
-                  imagePullPolicy: Never
+                  image: ghcr.io/artumont/ecommerce-app:latest
+                  imagePullPolicy: IfNotPresent
                   ports:
                       - containerPort: 3000
                   env:
