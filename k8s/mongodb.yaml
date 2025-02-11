@@ -1,58 +1,58 @@
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
-  name: mongodb
+    name: mongodb
 spec:
-  serviceName: mongodb
-  replicas: 1
-  selector:
-    matchLabels:
-      app: mongodb
-  template:
-    metadata:
-      labels:
-        app: mongodb
-    spec:
-      containers:
-      - name: mongodb
-        image: mongo:latest
-        ports:
-        - containerPort: 27017
-        volumeMounts:
-        - name: mongodb-data
-          mountPath: /data/db
-        resources:
-          requests:
-            cpu: "200m"
-            memory: "256Mi"
-          limits:
-            cpu: "500m"
-            memory: "512Mi"
-  volumeClaimTemplates:
-  - metadata:
-      name: mongodb-data
-    spec:
-      accessModes: [ "ReadWriteOnce" ]
-      resources:
-        requests:
-          storage: 1Gi
+    serviceName: mongodb
+    replicas: 1
+    selector:
+        matchLabels:
+            app: mongodb
+    template:
+        metadata:
+            labels:
+                app: mongodb
+        spec:
+            containers:
+                - name: mongodb
+                  image: mongo:latest
+                  ports:
+                      - containerPort: 27017
+                  volumeMounts:
+                      - name: mongodb-data
+                        mountPath: /data/db
+                  resources:
+                      requests:
+                          cpu: "200m"
+                          memory: "256Mi"
+                      limits:
+                          cpu: "500m"
+                          memory: "512Mi"
+    volumeClaimTemplates:
+        - metadata:
+              name: mongodb-data
+          spec:
+              accessModes: ["ReadWriteOnce"]
+              resources:
+                  requests:
+                      storage: 1Gi
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: mongodb
+    name: mongodb
 spec:
-  clusterIP: None
-  ports:
-  - port: 27017
-    targetPort: 27017
-  selector:
-    app: mongodb
+    clusterIP: None
+    ports:
+        - port: 27017
+          targetPort: 27017
+    selector:
+        app: mongodb
 ---
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: app-config
+    name: app-config
 data:
-  mongodb_uri: "mongodb://mongodb:27017/ecommerce"
-  node_env: "production"
+    mongodb_uri: "mongodb://mongodb:27017/ecommerce"
+    node_env: "production"

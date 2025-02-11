@@ -13,12 +13,12 @@ app.use(bodyParser.json());
 // Connect to MongoDB
 const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/ecommerce';
 mongoose.connect(MONGODB_URI)
-  .then(() => console.log('Connected to MongoDB'))
-  .catch(err => console.error('MongoDB connection error:', err));
+	.then(() => console.log('Connected to MongoDB'))
+	.catch(err => console.error('MongoDB connection error:', err));
 
 // Basic health check endpoint
 app.get('/health', (req, res) => {
-  res.json({ status: 'ok', timestamp: new Date().toISOString() });
+	res.json({ status: 'ok', timestamp: new Date().toISOString() });
 });
 
 // Import routes
@@ -27,11 +27,11 @@ app.use('/api/products', productRoutes);
 
 // Error handling middleware
 app.use((err, req, res, next) => {
-  console.error(err.stack);
-  res.status(500).json({ error: 'Something went wrong!' });
+	console.error(err.stack);
+	res.status(500).json({ error: 'Something went wrong!' });
 });
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
+	console.log(`Server running on port ${PORT}`);
 });
