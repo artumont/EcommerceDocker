@@ -111,4 +111,4 @@ kubectl delete -f k8s/
 
 This process is not nessesarily the best way to deploy the application to kubernetes. It is just one way to do it. There are many other ways to deploy the application to kubernetes. The best way to deploy the application to kubernetes would depend on the requirements of the application and the infrastructure it is running on.
 
-One extra thing to note is that the tunnel is there because minikube is running on a virtual machine. If minikube was running on a cloud provider like GCP or AWS, there would be no need for the tunnel. The service would be available at the EXTERNAL-IP address on port 80 without the need for a tunnel.
+One extra thing to note is that the tunnel is there because minikube is running on a virtual machine. If minikube was running on a cloud provider like GCP or AWS, there would be no need for the tunnel. The service would be available at the EXTERNAL-IP address on port 80 without the need for a tunnel (in theory, I dont have the resources to get a subscription to GCP or AWS, so I cant really test it).
