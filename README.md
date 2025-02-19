@@ -92,6 +92,8 @@ curl -X POST http://localhost:3000/api/products \
 
 The API and tester tool were developed with the assistance of AI to streamline the process and eliminate the need to build everything from scratch.
 
+Also if you want to check out what I did to deploy this on kubernetes, you can check out the [JOURNEY](JOURNEY.md) file, this is a file that I used to document my learning process and the steps I took to deploy this on kubernetes.
+
 ## 🤝 Contributing 
 
 Contributions are welcome! Please feel free to submit a Pull Request.

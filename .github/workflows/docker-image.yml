@@ -1,0 +1,46 @@
+name: Docker Build and Publish
+
+on:
+  push:
+    branches: [ "main" ]
+    paths-ignore:
+      - 'k8s/**'
+      - '.tools/**'
+      - '**.md'
+      - '.gitignore'
+  pull_request:
+    branches: [ "main" ]
+    paths-ignore:
+      - 'k8s/**'
+      - '.tools/**'
+      - '**.md'
+      - '.gitignore'
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: artumont/ecommerce-app
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          push: true
+          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
